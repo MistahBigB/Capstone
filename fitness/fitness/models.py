@@ -5,6 +5,7 @@ class Category(models.Model):
 
     def __str__(self):
         return self.name
+        
 class MuscleGroup(models.Model):
     name = models.CharField(max_length=10)
     
@@ -31,15 +32,15 @@ class Exercise(models.Model):
     equipment = models.ManyToManyField(Equipment, related_name='exercises')
     description = models.TextField()
     youtube = models.URLField()
-    img = models.ImageField()
+    img = models.ImageField(upload_to='exercise_images/')
     workouts = models.ManyToManyField(Workout, related_name='exercises', through='SuperSet')
 
     def __str__(self):
         return self.name
 
 class SuperSet(models.Model):
-    workout = models.ForeignKey(Workout, related_name='supersets')
-    exercise = models.ForeignKey(Exercise, related_name='supersets')
+    workout = models.ForeignKey(Workout, related_name='supersets', on_delete=models.CASCADE)
+    exercise = models.ForeignKey(Exercise, related_name='supersets', on_delete=models.CASCADE)
     rep = models.IntegerField()
     weight = models.IntegerField()
 

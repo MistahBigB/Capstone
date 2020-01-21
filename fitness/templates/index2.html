@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+{% load static %}
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>CappyStoney Jabroni</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'fitness_project/styling/main.css' %}">
+</head>
+
+<body>
+    <div id="app">
+        <h1>Let's build a workout!</h1>
+        <div class="dropdown">
+            <button @click="myFunction" class="dropbtn">Browse by Muscle Groups</button>
+            <div id="myDropdown" class="dropdown-content">
+                <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
+                <!-- how to make these elements list all exercises with their category tag -->
+                <ul>
+                    <!-- Needs to be list, not lateral -->
+
+                    <a @click="getMuscleGroup('arms')">Arms</a> <!-- @click="getMuscleGroup('arms')" -->
+                    <a @click="getMuscleGroup('back')">Back</a>
+                    <a @click="getMuscleGroup($event)">Cardio</a>
+                    <a @click="getMuscleGroup($event)">Chest</a>
+                    <a href="#core">Core</a>
+                    <a href="#legs">Legs</a>
+                </ul>
+            </div>
+        </div>
+
+        <div>
+            <ul>
+                <li v-for="group in muscleGroups">
+                    [[ group.name.exercise ]]
+                </li>
+            </ul>
+        </div>
+
+        <!-- <input type="search" placeholder="new exercise" v-model="searchInput" /> -->
+        <search-button @search-button="searchButton" class="btn"></search-button>
+        <rand-ex @rand-ex="randEx($event)" class="btn"></rand-ex>
+
+        <ul>
+            <li v-for="exercise in workouts" :key="exercise.id">
+                <p>
+                    <!-- thumbnail created, CSS to make pics adjustable -->
+                    [[exercise.name]] <img :src="exercise.img" style="width:100px;height:100px;">
+                    <input type="number" placeholder="weight" v-model="newWorkout.weight" min="0" value="0" />
+                    <input type="number" placeholder="reps" v-model="newWorkout.rep" min="0" value="0" />
+                    <add-exercise @add-exercise="addExercise($event)" class='btn'></add-exercise>
+                </p>
+                <delete-exercise @delete-exercise="deleteExercise(exercise)"></delete-exercise>
+            </li>
+        </ul>
+    </div>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://unpkg.com/vue"></script>
+    <script>
+
+        Vue.component('rand-ex', {
+            template: `<div v-on:click.prevent="$emit('rand-ex')" class='btn'>Give me something to do right now!</div>`
+        })
+
+        Vue.component('add-exercise', {
+            template: `<div v-on:click.prevent="$emit('add-exercise')" class='btn'>Add exercise to workout</div>`
+        })
+
+        Vue.component('search-button', {
+            template: `<div v-on:click.prevent="$emit('search-button')" class='btn'>Search</div>`
+        })
+
+        Vue.component('delete-exercise', {
+            template: `<div v-on:click.prevent="$emit('delete-exercise')" class='btn'>Clear</div>`
+        })
+
+        let vm = new Vue({
+            el: '#app', //element
+            delimiters: ['[[', ']]'],
+            data: {     //model to store the state of the webpage
+                workouts: [],
+                newWorkout: {
+                    exercise: null,
+                    rep: null,
+                    weight: null
+                },
+                searchInput: null,
+                muscleGroups: []
+            },
+            methods: {
+                addExercise: function () {
+                    this.newWorkout.push({
+                        exercise: this.exercise,
+                        rep: this.rep,
+                        weight: this.weight,
+                    });
+                    console.log(newWorkout)
+                    this.newWorkout.id++;
+                    this.workouts.push(newWorkout)
+                    console.log(workouts)
+                },
+
+                deleteExercise: function (exercise) {
+                    this.newWorkout = { exercise: null, rep: null, weight: null }
+                    this.workouts.splice(this.workouts.indexOf(exercise), 1);
+                },
+
+                randEx: function () {
+                    axios({
+                        method: 'GET',
+                        url: "/apis/v1/exercise/",
+                    }).then(response => {
+                        let pick = Math.floor(Math.random() * response.data.length + 1);
+                        console.log(pick)
+                        this.newWorkout = response.data[pick]
+                        console.log(this.newWorkout)
+                        this.workouts.push(this.newWorkout)
+                        console.log(this.workouts)
+                    }).catch(error => console.log(error))
+                },
+
+                searchButton: function () {
+                    axios({
+                        method: 'GET',
+                        url: "/apis/v1/exercise/",
+                        params: { name: this.searchInput }
+                    }).then(response => {
+                        console.log(this.searchInput)
+                        this.newWorkout = response.data[0]
+                        console.log(this.newWorkout)
+                        this.workouts.push(this.newWorkout)
+                        console.log(this.workouts)
+                    }).catch(error => console.log(error))
+                },
+
+                getMuscleGroup: function(name){
+                    axios({
+                        method: 'GET',
+                        url: "/apis/v1/muscle",
+                        params: {name:name}
+                    }).then(response => {
+                        groups = response.data
+                        console.log(groups)
+                        this.muscleGroups = groups
+
+                        // groups.objects.filter(name__lower__trigram_similar='name')
+                        // values of muscle_group
+                        // key/object
+                        // 'arms', 'back', 'cardio', 'chest', 'core', 'legs'
+                    })
+                },
+
+                /* When the user clicks on the button,
+                toggle between hiding and showing the dropdown content */
+                myFunction: function () {
+                    document.getElementById("myDropdown").classList.toggle("show");
+                },
+
+                filterFunction: function () {
+                    var input, filter, ul, li, a, i;
+                    input = document.getElementById("myInput");
+                    filter = input.value.toLowerCase();
+                    div = document.getElementById("myDropdown");
+                    a = div.getElementsByTagName("a");
+                    for (i = 0; i < a.length; i++) {
+                        txtValue = a[i].textContent || a[i].innerText;
+                        if (txtValue.toLowerCase().indexOf(filter) > -1) {
+                            a[i].style.display = "";
+                        } else {
+                            a[i].style.display = "none";
+                        }
+                    }
+                }
+
+            },
+        });
+    </script>
+</body>
+
+</html>

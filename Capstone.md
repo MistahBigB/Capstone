@@ -78,7 +78,6 @@ Muscles belong to a class of arm, leg, back, core
 Exercise in calendar needs to have weight/reps (Does this need to be a part of the original set of attributes) YES
 List of exercises in calendar needs to have checklist (exercise list becomes a todo app)
 
-
 What data will you need to store as part of your application? These should be specific nouns, collections of information that serve a collective purpose. Examples might be 'User', 'Book', 'ImageSet'. These are *schemas* for your data models (database tables).
 
 ## Schedule
@@ -126,3 +125,10 @@ Generally, you want to rank your product backlog in terms of:
 - Nice-to-haves
 
 Each MVP must be a completed *end-to-end product*. What this means is you need a functioning back-end connected to a functioning front-end. Get all your models, views/templates, and controller/views connected.
+
+
+1/16: Data structure synthesized, API built, database relationships set up. We can make exercises and assign them to workouts
+1/17: Write basic html, JS inputs with Vue components
+1/20: Have axios/Vue call the database thru the API, have the buttons display data
+1/21: Have the buttons display data, save data to workout/superset
+
