@@ -12,49 +12,59 @@
 
 <body>
     <div id="app">
+        <!--  @click="hideDropdown($event)" -->
         <h1>Let's build a workout!</h1>
+        
+        <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
+        <search-button @search-button="searchButton" class="btn"></search-button>
+        <delete-exercise @delete-exercise="deleteExercise(newWorkout.exercise)"></delete-exercise>
+        <rand-ex @rand-ex="randEx($event)" class="btn"></rand-ex>
+        
         <div class="dropdown">
-            <button @click="myFunction" class="dropbtn">Browse by Muscle Groups</button>
-            <div id="myDropdown" class="dropdown-content">
-                <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
-                <!-- how to make these elements list all exercises with their category tag -->
-                <ul>
-                    <!-- Needs to be list, not lateral -->
+            <button @click="showDropdown($event)" class="dropbtn">Browse by Muscle Groups</button>
+            <hide-dropdown @click="hideDropdown($event)"></hide-dropdown>
 
-                    <a @click="getMuscleGroup('arms')">Arms</a> <!-- @click="getMuscleGroup('arms')" -->
-                    <a @click="getMuscleGroup('back')">Back</a>
-                    <a @click="getMuscleGroup($event)">Cardio</a>
-                    <a @click="getMuscleGroup($event)">Chest</a>
-                    <a href="#core">Core</a>
-                    <a href="#legs">Legs</a>
+            <div id="myDropdown" class="dropdown-content">
+                
+                <ul>
+                    <!-- list of available musclegroups -->
+                    <a @click="getMuscleGroup('arms'); hideDropdown($event)">Arms</a>
+                    <a @click="getMuscleGroup('back'); hideDropdown($event)">Back</a>
+                    <a @click="getMuscleGroup('cardio'); hideDropdown($event)">Cardio</a>
+                    <a @click="getMuscleGroup('chest'); hideDropdown($event)">Chest</a>
+                    <a @click="getMuscleGroup('core'); hideDropdown($event)">Core</a>
+                    <a @click="getMuscleGroup('legs'); hideDropdown($event)">Legs</a>
                 </ul>
             </div>
         </div>
-
+        <!-- <select v-model="selectedChoice" -->
+        <!-- <select><option v-for="option in optionList">
+            < :value="option.name">[[option.name]]</option> -->
+        <delete-exercise @delete-exercise="deleteExercise(newWorkout)"></delete-exercise>
         <div>
-            <ul>
-                <li v-for="group in muscleGroups">
-                    [[ group.name.exercise ]]
-                </li>
-            </ul>
-        </div>
-
-        <!-- <input type="search" placeholder="new exercise" v-model="searchInput" /> -->
-        <search-button @search-button="searchButton" class="btn"></search-button>
-        <rand-ex @rand-ex="randEx($event)" class="btn"></rand-ex>
-
-        <ul>
-            <li v-for="exercise in workouts" :key="exercise.id">
-                <p>
-                    <!-- thumbnail created, CSS to make pics adjustable -->
-                    [[exercise.name]] <img :src="exercise.img" style="width:100px;height:100px;">
+            <ul v-for="group in muscleGroups">
+                [[ group.name ]]
+                <br>
+                <p v-for="exercise in group.exercises">
+                    [[ exercise.name ]]<img :src="exercise.img" style="width:100px;height:100px;">
                     <input type="number" placeholder="weight" v-model="newWorkout.weight" min="0" value="0" />
                     <input type="number" placeholder="reps" v-model="newWorkout.rep" min="0" value="0" />
                     <add-exercise @add-exercise="addExercise($event)" class='btn'></add-exercise>
                 </p>
-                <delete-exercise @delete-exercise="deleteExercise(exercise)"></delete-exercise>
-            </li>
+            </ul>
+        </div>
+
+        <ul v-for="exercise in workouts" :key="exercise.id">
+            <p>
+                <!-- thumbnail created, CSS to make pics adjustable -->
+                [[exercise.name]] <img :src="exercise.img" style="width:100px;height:100px;">
+                <input type="number" placeholder="weight" v-model="newWorkout.weight" min="0" value="0" />
+                <input type="number" placeholder="reps" v-model="newWorkout.rep" min="0" value="0" />
+                <add-exercise @add-exercise="addExercise($event)" class='btn'></add-exercise>
+            </p>
+            <delete-exercise @delete-exercise="deleteExercise(exercise)"></delete-exercise>
         </ul>
+
     </div>
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
@@ -76,6 +86,10 @@
             template: `<div v-on:click.prevent="$emit('delete-exercise')" class='btn'>Clear</div>`
         })
 
+        Vue.component('hide-dropdown', {
+            template: `<div v-on:click.prevent="$emit('hide-dropdown')"></div>`
+        })
+
         let vm = new Vue({
             el: '#app', //element
             delimiters: ['[[', ']]'],
@@ -86,8 +100,9 @@
                     rep: null,
                     weight: null
                 },
-                searchInput: null,
-                muscleGroups: []
+                searchInput: '',
+                muscleGroups: [],
+                muscleDropDown: false
             },
             methods: {
                 addExercise: function () {
@@ -103,8 +118,15 @@
                 },
 
                 deleteExercise: function (exercise) {
+                    console.log(this.newWorkout);
                     this.newWorkout = { exercise: null, rep: null, weight: null }
                     this.workouts.splice(this.workouts.indexOf(exercise), 1);
+                    this.searchInput = ''
+                    this.muscleGroups = []
+                    this.name = null
+                    console.log(this.name)
+                    this.filterFunction();
+                    console.log('i ran the filter function!!!')
                 },
 
                 randEx: function () {
@@ -135,29 +157,30 @@
                     }).catch(error => console.log(error))
                 },
 
-                getMuscleGroup: function(name){
+                getMuscleGroup: function (name) {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/muscle",
-                        params: {name:name}
+                        params: { name: name }
                     }).then(response => {
                         groups = response.data
                         console.log(groups)
                         this.muscleGroups = groups
-
-                        // groups.objects.filter(name__lower__trigram_similar='name')
-                        // values of muscle_group
-                        // key/object
-                        // 'arms', 'back', 'cardio', 'chest', 'core', 'legs'
                     })
                 },
 
-                /* When the user clicks on the button,
-                toggle between hiding and showing the dropdown content */
-                myFunction: function () {
+                /* Toggle between hiding and showing the dropdown content */
+                showDropdown: function (event) {
                     document.getElementById("myDropdown").classList.toggle("show");
+                    console.log('show')
                 },
-
+                hideDropdown: function (event) {
+                    document.getElementById("myDropdown").classList.toggle("show");
+                    console.log('clicked hide')
+                },
+                // window.onclick = function(event) {
+                //     document.getElementById("myDropdown").classList.remove("show");
+                // },
                 filterFunction: function () {
                     var input, filter, ul, li, a, i;
                     input = document.getElementById("myInput");

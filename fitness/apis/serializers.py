@@ -5,8 +5,8 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Category
         fields = ['name']
-
-class MuscleGroupSerializer(serializers.ModelSerializer):
+ 
+class ExMuscleGroupSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.MuscleGroup
         fields = ['name']
@@ -17,7 +17,7 @@ class EquipmentSerializer(serializers.ModelSerializer):
         fields = ['name']
 
 class ExerciseSerializer(serializers.ModelSerializer):
-    muscle_info = MuscleGroupSerializer(many=True, read_only=True, source='muscle_group')
+    muscle_info = ExMuscleGroupSerializer(many=True, read_only=True, source='muscle_group')
     category_info = CategorySerializer(many=True, read_only=True, source='category')
     equipment_info = EquipmentSerializer(many=True, read_only=True, source='equipment')
 
@@ -36,6 +36,12 @@ class ExerciseSerializer(serializers.ModelSerializer):
             'youtube',
             'img',
         ]
+
+class MuscleGroupSerializer(serializers.ModelSerializer):
+    exercises = ExerciseSerializer(many=True, read_only=True)
+    class Meta:
+        model = models.MuscleGroup
+        fields = ['name', 'exercises']
 
 class SuperSetSerializer(serializers.ModelSerializer):
     exercise_info = ExerciseSerializer(read_only=True, source='exercise')

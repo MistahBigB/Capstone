@@ -9,7 +9,9 @@ class CategoryViewSet(viewsets.ModelViewSet):
 class MuscleGroupViewSet(viewsets.ModelViewSet):
     queryset = models.MuscleGroup.objects.all()
     serializer_class = MuscleGroupSerializer
+    filterset_fields = ['name']
 
+# manually creates a name parameter to search
     def get_queryset(self):
         name = self.request.GET.get("muscle_group", None)
 
