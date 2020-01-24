@@ -132,5 +132,8 @@ Daily:
 1/20: Have axios/Vue call the database thru the API, have the buttons display data
     Search function required heavy Serializer modification
 1/21: Have the buttons display data, get dropdown working
-1/22: save data to workout/superset
-1/23: CRUDL workout/superset
+1/22: save data to workout/superset (chasing bugs)
+1/23: save data to workout/superset, display 2 containers, make selector for workout list and currently active workout
+1/24: Solve this 400 bad request error when attempting to post 
+1/25: CRUDL workout/superset    MILESTONE!!!!
+ 
