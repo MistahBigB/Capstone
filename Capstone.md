@@ -133,7 +133,7 @@ Daily:
     Search function required heavy Serializer modification
 1/21: Have the buttons display data, get dropdown working
 1/22: save data to workout/superset (chasing bugs)
-1/23: save data to workout/superset, display 2 containers, make selector for workout list and currently active workout
-1/24: Solve this 400 bad request error when attempting to post 
+1/23: save data to workout/superset, display 2 containers, make selector for workout list and currently active workout, style buttons 
+1/24: Solve this 400 bad request error when attempting to post, make selector for workout list and currently active workout, have only the items in active workout display, display all data in active workout
 1/25: CRUDL workout/superset    MILESTONE!!!!
  

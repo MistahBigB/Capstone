@@ -59,5 +59,5 @@ class WorkoutSerializer(serializers.ModelSerializer):
     superset_info = SuperSetSerializer(many=True, read_only=True, source='supersets')
     class Meta:
         model = models.Workout
-        fields = ['name', 'date_created', 'exercise_info', 'supersets', 'superset_info']
+        fields = ['id', 'name', 'date_created', 'exercise_info', 'supersets', 'superset_info']
     # depth = 1

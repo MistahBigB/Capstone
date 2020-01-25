@@ -20,7 +20,7 @@ class Equipment(models.Model):
 
 class Workout(models.Model):
     name = models.CharField(max_length=100)
-    date_created = models.DateField()
+    date_created = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.name

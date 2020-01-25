@@ -1,3 +1,13 @@
+<!-- ask someone if they remember which link had the fields updating at the same time, and how to fix it -->
+
+
+
+
+
+
+
+
+
 <!DOCTYPE html>
 {% load static %}
 
@@ -18,7 +28,7 @@
             <h1>Let's build a workout!</h1>
             <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
             <search-button @search-button="searchButton" class="btn"></search-button>
-            <delete-exercise @delete-exercise="deleteExercise(filteredExercise.exercise)"></delete-exercise>
+            <delete-exercise @delete-exercise="deleteExercise(filteredExercise.exercise)" class="btn"></delete-exercise>
             <rand-ex @rand-ex="randEx($event)" class="btn"></rand-ex>
 
             <div class="dropdown">
@@ -26,7 +36,6 @@
                 <hide-dropdown @click="hideDropdown($event)"></hide-dropdown>
 
                 <div id="myDropdown" class="dropdown-content">
-
                     <ul>
                         <!-- list of available musclegroups -->
                         <a @click="getMuscleGroup('arms'); hideDropdown($event)">Arms</a>
@@ -64,7 +73,7 @@
         </div>
 
         <div class="right-half">
-            <h3>I'm on the right side!</h3>
+            <h1>I'm on the right side!</h1>
             <input type="text" placeholder="Workout1" id="workout-name" v-model="workout.name">
             <button @click.prevent="storeName($event)" class="btn">Save</button>
 
@@ -73,38 +82,33 @@
                 <hide-dropdown2 @click="hideDropdown2($event)"></hide-dropdown2>
 
                 <div id="myDropdown2" class="dropdown-content">
+                    <!-- list of available workouts -->
+                    <a @click="getWorkout(workout)"></a>
+                    <option v-for="item in workout" :key="item.id">
+                        [[ item.name ]]
+                    </option>
 
-                    <ul>
-                        <!-- list of available newWorkout -->
-                        <a @click="getWorkout"></a>
-                    </ul>
                 </div>
+                <select v-model="menu2">
+                    <option v-for='item in workout' :key="item.id" :value="item.id">
+                        [[item.name]]
+                    </option>
+                </select>
             </div>
             <delete-workout @delete-workout="deleteWorkout(deleteWorkout)"></delete-workout>
-            <!-- dropdown display to show available workouts-->
-            <div>
-                <ul v-for="newWorkout in superSet">
-                    [[ superSet.name ]]
-                    <br>
+            
+            <div v-for="wo in workout">
+                <div v-for="exercise in wo.superset_info">
+                    <p> [[ exercise.exercise_info.name ]] 
+                        <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
+                        <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
                     </p>
-                </ul>
-            </div>
-
-            <div>
-                <form>
-                    <!-- print a list of exercises in active workout -->
-                    <!-- <workout-list v-bind:filtered-exercise="filteredExercise"></workout-list> -->
-                    <p v-for="workout in superSet.newWorkout">
-                        [[ workout.newWorkout.exercise.name ]]
-                            [[ workout.newWorkout.exercise.name ]]<img :src="workout.newWorkout.exercise.img"
-                            style="width:100px;height:100px;">
-                            [[ workout.newWorkout.exercise.rep]][[ workout.newWorkout.exercise.weight]]
-                            <delete-exercise @delete-exercise="deleteExercise(exercise)"></delete-exercise>
-                        </p>
-
-                </form>
+                        </div>
+                    </p>
+                </div>
             </div>
         </div>
+    </div>
     </div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
@@ -150,9 +154,9 @@
         })
 
         let vm = new Vue({
-            el: '#app', //element
+            el: '#app', 
             delimiters: ['[[', ']]'],
-            data: {     //model to store the state of the webpage
+            data: {
                 superSet: {
                     newWorkout: []
                 },
@@ -163,6 +167,7 @@
                     weight: null
                 },
                 workout: {},
+                menu2: 'My Workouts',
                 searchInput: '',
                 muscleGroups: [],
                 token: "{{ csrf_token }}",
@@ -175,21 +180,22 @@
                         url: "/apis/v1/workout/",
                         headers: { 'X-CSRFToken': this.token },
                         data: {
-                            name: this.name,
-                            date_created: null,
+                            name: this.workout.name,
                             supersets: []
                         }
                     }).then(response => {
-                        workout.id++
+                        console.log(this.workout)
+                        getWorkout();
                     })
                 },
 
-                deleteWorkout: function (superSet) {
-                    console.log(this.superSet)
+                deleteWorkout: function (workout) {
+                    console.log(this.workout)
                     this.superSet = {
                         id: null,
                         name: null,
-                        newWorkout: []
+                        newWorkout: [],
+                        superSet: []
                     }
                     console.log('deleted')
                     console.log(this.superSet)
@@ -201,10 +207,11 @@
                         url: "/apis/v1/superset/",
                         headers: { 'X-CSRFToken': this.token },
                         data: {
-                            id: this.id,
-                            filteredExercise: this.filteredExercise
+                            exercise: this.filteredExercise.id,
+                            workout: this.menu2,
+                            rep: this.filteredExercise.rep,
+                            weight: this.filteredExercise.weight
                         }
-
                     }).then((response) => {
                         console.log(response)
                         console.log(this.exercise),
@@ -233,10 +240,11 @@
                     this.filterFunction();
                 },
 
-                getWorkout: function () {
+                getWorkout: function (workout) {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/workout/",
+                        headers: { 'X-CSRFToken': this.token },
                     }).then(response => {
                         sets = response.data
                         console.log(sets)
@@ -290,7 +298,7 @@
                     console.log('show')
                 },
                 hideDropdown: function (event) {
-                    document.getElementById("myDropdown").display('none');
+                    document.getElementById("myDropdown").toggle('show');
                     console.log('clicked hide')
                 },
 
@@ -317,9 +325,21 @@
                             a[i].style.display = "none";
                         }
                     }
-                }
-
+                },
             },
+            mounted: function () {
+                console.log('blardeebloo')
+                axios({
+                    url: 'apis/v1/workout/',
+                    method: 'GET',
+                    headers: { 'X-CSRFToken': this.token },
+                }).then(response => {
+                    this.workout = response.data
+                }).catch(error => console.log(error))
+            },
+
+
+
         });
     </script>
 </body>

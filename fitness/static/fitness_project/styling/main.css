@@ -5,7 +5,7 @@ html, body, section {
   .container {
     display: flex;
     flex-direction: row;
-    justify-content: left;
+    justify-content: center;
   }
   
   .left-half {
@@ -24,7 +24,6 @@ html, body, section {
 
 .btn {
     color: #494949;
-    text-transform: uppercase;
     text-decoration: none;
     background: #ffffff;
     padding: 16px;
@@ -33,7 +32,7 @@ html, body, section {
     transition: all 0.4s ease 0s;
     cursor: pointer;
     user-select: none;
-    display: grid;
+    width: 25%;
     }
 
 .btn:hover {
@@ -41,17 +40,21 @@ html, body, section {
     background: #f6b93b;
     border-color: #f6b93b;
     transition: all 0.4s ease 0s;
-    border-radius: 5px;
+    border-radius: 25px;
     }
+
+.btnbar {
+float: left;
+}
 
 .dropbtn {
   background-color: #4CAF50;
   color: white;
   padding: 16px;
   font-size: 16px;
-  border: none;
   cursor: pointer;
   user-select: none;
+  border: 2px solid #494949;
 }
 
 .dropbtn:hover, .dropbtn:focus {
@@ -67,9 +70,24 @@ html, body, section {
   padding: 14px 20px 12px 45px;
   border: none;
   border-bottom: 1px solid #ddd;
+  width: 50%;
 }
 
 #myInput:focus {outline: 3px solid #ddd;}
+
+#workout-name {
+    box-sizing: border-box;
+    background-image: url('searchicon.png');
+    background-position: 14px 12px;
+    background-repeat: no-repeat;
+    font-size: 16px;
+    padding: 14px 20px 12px 45px;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    width: 50%;
+  }
+  
+  #workout-name:focus {outline: 3px solid #ddd;}
 
 .dropdown {
   position: relative;
@@ -96,3 +114,49 @@ html, body, section {
 .dropdown a:hover {background-color: #ddd;}
 
 .show {display: block;}
+
+
+/* Media query section */
+@media(max-width: 700px) {
+    .top-container {
+      grid-template-areas:
+      'showcase showcase showcase'
+      'top-box-a top-box-b top-box-c';
+    }
+  
+    .main-nav ul {
+      grid-template-columns: 1fr;
+    }
+    .info {
+      grid-template-columns: 1fr;
+    }
+  
+    .info .btn {
+      display: block;
+      text-align: center;
+      margin: auto;
+    }
+  }
+  
+  @media(max-width: 500px) {
+    .top-container {
+      grid-template-areas:
+      'showcase'
+      'top-box-a'
+      'top-box-b' 
+      'top-box-c';
+    }
+  
+    .main-nav ul {
+      grid-template-columns: 1fr;
+    }
+    .info {
+      grid-template-columns: 1fr;
+    }
+  
+    .info .btn {
+      display: block;
+      text-align: center;
+      margin: auto;
+    }
+  }
