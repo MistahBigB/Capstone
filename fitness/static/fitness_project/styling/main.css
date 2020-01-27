@@ -115,6 +115,7 @@ float: left;
 
 .show {display: block;}
 
+/* #content {display: none;} */
 
 /* Media query section */
 @media(max-width: 700px) {

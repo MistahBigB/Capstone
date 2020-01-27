@@ -73,14 +73,15 @@
         </div>
 
         <div class="right-half">
-            <h1>I'm on the right side!</h1>
+            <h1>Select Your Workout!</h1>
             <input type="text" placeholder="Workout1" id="workout-name" v-model="workout.name">
             <button @click.prevent="storeName($event)" class="btn">Save</button>
 
             <div class="dropdown">
                 <button @click="showDropdown2($event)" class="dropbtn">My Workouts</button>
                 <hide-dropdown2 @click="hideDropdown2($event)"></hide-dropdown2>
-
+                
+                <!-- big dropdown -->
                 <div id="myDropdown2" class="dropdown-content">
                     <!-- list of available workouts -->
                     <a @click="getWorkout(workout)"></a>
@@ -89,24 +90,30 @@
                     </option>
 
                 </div>
-                <select v-model="menu2">
+                <!-- small dropdown -->
+                <select v-model="menu2" >
+                    <!-- if workout = '', display="none" else -->
+                <!-- <@click="showContent()"> -->
                     <option v-for='item in workout' :key="item.id" :value="item.id">
                         [[item.name]]
                     </option>
                 </select>
-            </div>
-            <delete-workout @delete-workout="deleteWorkout(deleteWorkout)"></delete-workout>
-            
-            <div v-for="wo in workout">
-                <div v-for="exercise in wo.superset_info">
-                    <p> [[ exercise.exercise_info.name ]] 
-                        <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
-                        <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
-                    </p>
-                        </div>
-                    </p>
+
+                <!-- map through workouts to return this.workout.data.filter('this.workout[id]') -->
+                <div id="content" v-for="wo in workout">
+                    <div v-for="exercise in wo.superset_info">
+                        <p> [[ exercise.exercise_info.name ]] 
+                            <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
+                            <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
+                        </p>
+                            </div>
+                        </p>
+                    </div>
                 </div>
+                <delete-workout @delete-workout="deleteWorkout(deleteWorkout)"></delete-workout>
+    
             </div>
+            
         </div>
     </div>
     </div>
@@ -224,7 +231,6 @@
                         this.filteredExercise.id++;
                         this.newWorkout.push(this.filteredExercise)
                         console.log(this.newWorkout)
-                        console.log("but y tho")
                         this.superSet.newWorkout.push(this.filteredExercise)
                         console.log(this.superSet)
                     })
@@ -311,6 +317,11 @@
                     document.getElementById("myDropdown2").classList.toggle("show");
                     console.log('clicked hide')
                 },
+                // this doesn't want to turn R side menu content on and off
+                showContent: function (event) {
+                    document.getElementById('content').classList.toggle('show');
+                },
+
                 filterFunction: function () {
                     var input, filter, ul, li, a, i;
                     input = document.getElementById("myInput");
@@ -328,7 +339,6 @@
                 },
             },
             mounted: function () {
-                console.log('blardeebloo')
                 axios({
                     url: 'apis/v1/workout/',
                     method: 'GET',
