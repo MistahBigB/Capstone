@@ -114,7 +114,8 @@ N: Drag and drop workout to workout list CRUDL
 E: Calendar page
 E: Pin workout to calendar day
 R: Track progress
-N: Set milestones 
+N: Set milestones
+N: Home page with tracking and milestones 
 
 You want each of your milestones to result in a minimal viable product. For each milestone, take a few features off of your **product backlog** (the set of user stories you have defined). 
 
@@ -140,8 +141,26 @@ Daily:
             Add exercise is displaying an extra blank container when the button is pressed
             Items in workout list should only display when workout in workout list is selected
             
-Enter button for a dropdown selector
+            Enter button for a dropdown selector?
 
 1/27: Users!
-1/28: Ensuring user CRUDL
+1/28: Ensuring user CRUDL, display workout names/links on user page, signup page!
+1/29: Calendar!
  
+AddEx lines 234-7 commented
+Select WO mandatory -> Search for ex -> add w/r -> addEx --> refresh -> GREEN
+ 
+Clear will clear search criteria, randex entry
+
+WO Selected --> dropdown category --> pick exercise --> add w/r --> AddEx --> refresh --> RED
+    error 400
+
+restored 234-5, error 400
+
+restored 234-7, error 400
+
+
+
+
+
+

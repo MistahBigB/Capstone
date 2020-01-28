@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{% if user.is_authenticated %}
+  Hi {{ user.username }}!
+  <p><a href="{% url 'logout' %}">Logout</a></p>
+  {% if user.workouts %}
+  <p>{{ user.username }}'s Workouts</p>
+      <p> {% for workout in user.workouts %}</p>
+        {% workout% }
+        {% endfor %}
+  {% else %}
+  <p>You have not created any workouts yet!</p>
+  <p><a href="{% url 'create' %}">Create a workout now</a></p>
+  {% endif %}
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">Login</a>
+{% endif %}
+{% endblock %}

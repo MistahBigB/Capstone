@@ -1,5 +1,5 @@
 <!-- ask someone if they remember which link had the fields updating at the same time, and how to fix it -->
-
+<!-- word is build components and instantiate them when the loop runs -->
 
 
 
@@ -23,7 +23,6 @@
 <body>
     <div id="app" class="container">
         <!--  @click="hideDropdown($event)" -->
-
         <div class="left-half">
             <h1>Let's build a workout!</h1>
             <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
@@ -54,9 +53,10 @@
                     <br>
                     <p v-for="exercise in group.exercises">
                         [[ exercise.name ]]<img :src="exercise.img" style="width:100px;height:100px;">
-                        <input type="number" placeholder="weight" v-model="filteredExercise.weight" min="0" value="0" />
-                        <input type="number" placeholder="reps" v-model="filteredExercise.rep" min="0" value="0" />
-                        <add-exercise @add-exercise="addExercise($event)" class='btn'></add-exercise>
+                        <!-- assign a uninque ID to each field, ++ for each item in loop -->
+                        <input type="number" placeholder="weight" v-model="filteredExercise.weight" min="0" />
+                        <input type="number" placeholder="reps" v-model="filteredExercise.rep" min="0" />
+                        <add-exercise @add-exercise="addExercise(exercise)" class='btn'></add-exercise>
                     </p>
                 </ul>
             </div>
@@ -94,14 +94,15 @@
                 <select v-model="menu2" >
                     <!-- if workout = '', display="none" else -->
                 <!-- <@click="showContent()"> -->
-                    <option v-for='item in workout' :key="item.id" :value="item.id">
+                    <option @click="setCurrentWorkout(i)" v-for='item, i in workout' :key="item.id" :value="item.id">
                         [[item.name]]
                     </option>
+                    <!--  -->
                 </select>
 
                 <!-- map through workouts to return this.workout.data.filter('this.workout[id]') -->
-                <div id="content" v-for="wo in workout">
-                    <div v-for="exercise in wo.superset_info">
+                <!-- <div id="content" v-for="wo in workout" > -->
+                    <div v-for="exercise in workout[current_workout].superset_info" :key="exercise.id">
                         <p> [[ exercise.exercise_info.name ]] 
                             <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
                             <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
@@ -109,7 +110,7 @@
                             </div>
                         </p>
                     </div>
-                </div>
+                <!-- </div> -->
                 <delete-workout @delete-workout="deleteWorkout(deleteWorkout)"></delete-workout>
     
             </div>
@@ -178,6 +179,7 @@
                 searchInput: '',
                 muscleGroups: [],
                 token: "{{ csrf_token }}",
+                current_workout: 0,
             },
             methods: {
 
@@ -214,15 +216,24 @@
                         url: "/apis/v1/superset/",
                         headers: { 'X-CSRFToken': this.token },
                         data: {
-                            exercise: this.filteredExercise.id,
-                            workout: this.menu2,
-                            rep: this.filteredExercise.rep,
-                            weight: this.filteredExercise.weight
+                            exercise: exercise.id,
+                            // workout: this.current_workout,
+                            rep: 1,
+                            workout: this.current_workout,
+
+                            weight: 2
                         }
+                        // data: {
+                        //     exercise: this.filteredExercise.id,
+                        //     workout: this.menu2,
+                        //     rep: parseInt(this.filteredExercise.rep),
+                        //     weight: parseInt(this.filteredExercise.weight)
+                        // }
+                         
                     }).then((response) => {
                         console.log(response)
-                        console.log(this.exercise),
-                            // console.log(filteredExercise),
+                        // console.log(this.exercise),
+                        // console.log(filteredExercise),
                             this.filteredExercise = {
                                 exercise: this.exercise,
                                 rep: this.rep,
@@ -230,9 +241,10 @@
                             }
                         this.filteredExercise.id++;
                         this.newWorkout.push(this.filteredExercise)
-                        console.log(this.newWorkout)
-                        this.superSet.newWorkout.push(this.filteredExercise)
-                        console.log(this.superSet)
+                        // console.log(this.newWorkout)
+                        // this.superSet.newWorkout.push(this.filteredExercise)
+                        // console.log(this.superSet)
+                        this.workout[this.current_workout].exercise_info.push(this.filteredExercise)
                     })
                 },
 
@@ -337,10 +349,15 @@
                         }
                     }
                 },
+                setCurrentWorkout: function (i) {
+                    this.current_workout = i+1
+                }
+
+
             },
             mounted: function () {
                 axios({
-                    url: 'apis/v1/workout/',
+                    url: '/apis/v1/workout/',
                     method: 'GET',
                     headers: { 'X-CSRFToken': this.token },
                 }).then(response => {
