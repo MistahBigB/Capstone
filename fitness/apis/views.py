@@ -1,6 +1,8 @@
 from rest_framework import viewsets
 from fitness import models
-from .serializers import CategorySerializer, MuscleGroupSerializer, EquipmentSerializer, ExerciseSerializer, WorkoutSerializer, SuperSetSerializer
+from .serializers import CategorySerializer, MuscleGroupSerializer, EquipmentSerializer, ExerciseSerializer, WorkoutSerializer, SuperSetSerializer, UsersSerializer
+from rest_framework.views import APIView
+from rest_framework.response import Response
 
 class CategoryViewSet(viewsets.ModelViewSet):
     queryset = models.Category.objects.all()
@@ -37,6 +39,9 @@ class ExerciseViewSet(viewsets.ModelViewSet):
         return models.Exercise.objects.all()
 
 class WorkoutViewSet(viewsets.ModelViewSet):
+    def get_queryset(self): 
+        return models.Workout.objects.filter(author=self.request.user)
+    
     queryset = models.Workout.objects.all()
     serializer_class = WorkoutSerializer
     
@@ -44,3 +49,7 @@ class SuperSetViewSet(viewsets.ModelViewSet):
     queryset = models.SuperSet.objects.all()
     serializer_class = SuperSetSerializer
 
+class CurrentUserView(APIView):    
+    def get(self, request):
+        serializer = UsersSerializer(request.user)
+        return Response(serializer.data)

@@ -91,10 +91,10 @@
 
                 </div>
                 <!-- small dropdown -->
-                <select v-model="menu2" >
+                <select v-model="menu2" v-if="workout.length > 0">
                     <!-- if workout = '', display="none" else -->
                 <!-- <@click="showContent()"> -->
-                    <option @click="setCurrentWorkout(i)" v-for='item, i in workout' :key="item.id" :value="item.id">
+                    <option v-for='item, i in workout' :key="item.id" :value="item.id">
                         [[item.name]]
                     </option>
                     <!--  -->
@@ -102,7 +102,8 @@
 
                 <!-- map through workouts to return this.workout.data.filter('this.workout[id]') -->
                 <!-- <div id="content" v-for="wo in workout" > -->
-                    <div v-for="exercise in workout[current_workout].superset_info" :key="exercise.id">
+                    <div v-if="workout.length > 0"> 
+                        <div v-for="exercise in workout[current_workout].superset_info" :key="exercise.id">
                         <p> [[ exercise.exercise_info.name ]] 
                             <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
                             <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
@@ -110,7 +111,8 @@
                             </div>
                         </p>
                     </div>
-                <!-- </div> -->
+                </div>
+                </div>
                 <delete-workout @delete-workout="deleteWorkout(deleteWorkout)"></delete-workout>
     
             </div>
@@ -179,22 +181,26 @@
                 searchInput: '',
                 muscleGroups: [],
                 token: "{{ csrf_token }}",
+                // default for current workout must be set
+                // else the page won't load
                 current_workout: 0,
+                current_user: {},
             },
             methods: {
-
                 storeName: function () {
                     axios({
                         method: 'POST',
                         url: "/apis/v1/workout/",
                         headers: { 'X-CSRFToken': this.token },
                         data: {
+                            author: this.current_user.id,
                             name: this.workout.name,
                             supersets: []
                         }
                     }).then(response => {
                         console.log(this.workout)
-                        getWorkout();
+                        this.setCurrentWorkout(this.workout)
+                        // this.getWorkout(this.workout)
                     })
                 },
 
@@ -217,11 +223,9 @@
                         headers: { 'X-CSRFToken': this.token },
                         data: {
                             exercise: exercise.id,
-                            // workout: this.current_workout,
-                            rep: 1,
                             workout: this.current_workout,
-
-                            weight: 2
+                            rep: this.filteredExercise.rep,
+                            weight: this.filteredExercise.weight
                         }
                         // data: {
                         //     exercise: this.filteredExercise.id,
@@ -269,6 +273,17 @@
                         this.workout = sets
                     })
                 },
+
+                getCurrentUser: function () {
+                    axios({
+                        method: 'GET',
+                        url: "/apis/v1/current_user/",
+                        headers: { 'X-CSRFToken': this.token },
+                    }).then(response => {
+                        this.current_user = response.data
+                    })
+                },
+
 
                 randEx: function () {
                     axios({
@@ -350,8 +365,11 @@
                     }
                 },
                 setCurrentWorkout: function (i) {
-                    this.current_workout = i+1
+                    // can't post to workout[0] unless i+1
+                    // won't select workout[0] if i+1, but posts to it
+                    this.current_workout = i
                 }
+
 
 
             },
@@ -363,6 +381,7 @@
                 }).then(response => {
                     this.workout = response.data
                 }).catch(error => console.log(error))
+                this.getCurrentUser()
             },
 
 

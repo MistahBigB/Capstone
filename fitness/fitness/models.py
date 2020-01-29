@@ -21,7 +21,7 @@ class Equipment(models.Model):
         return self.name
 
 class Workout(models.Model):
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, blank=True, null=True)
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     date_created = models.DateField(auto_now_add=True)
 

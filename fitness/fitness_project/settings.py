@@ -40,11 +40,12 @@ INSTALLED_APPS = [
     'fitness.apps.FitnessConfig',
     'rest_framework',
     'apis.apps.ApisConfig',
-    'django_filters'
+    'django_filters',
+    'accounts.apps.AccountsConfig'
 ]
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.AllowAny'],
+    'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticated'],
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 
 }

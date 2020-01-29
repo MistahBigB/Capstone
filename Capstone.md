@@ -128,6 +128,8 @@ Generally, you want to rank your product backlog in terms of:
 Each MVP must be a completed *end-to-end product*. What this means is you need a functioning back-end connected to a functioning front-end. Get all your models, views/templates, and controller/views connected.
 
 Daily:
+
+Week1:
 1/16: Data structure synthesized, API built, database relationships set up. We can make exercises and assign them to workouts
 1/17: Write basic html, JS inputs with Vue components
 1/20: Have axios/Vue call the database thru the API, have the buttons display data
@@ -137,30 +139,18 @@ Daily:
 1/23: save data to workout/superset, display 2 containers, make selector for workout list and currently active workout, style buttons 
 1/24: Solve this 400 bad request error when attempting to post, make selector for workout list and currently active workout, have only the items in active workout display, display all data in active workout MILESTONE!!!!
 
+Week2:
+1/27: Users!
+1/28: Ensuring user CRUDL, display workout names/links on user page, signup page, permissions
+1/29: Calendar!
+
+
+
     Blocks: Add exercise needs to refresh the workout list to show the recent addition -> check rerendering of state for VUE
             Add exercise is displaying an extra blank container when the button is pressed
-            Items in workout list should only display when workout in workout list is selected
+            All users can see all workouts
             
             Enter button for a dropdown selector?
-
-1/27: Users!
-1/28: Ensuring user CRUDL, display workout names/links on user page, signup page!
-1/29: Calendar!
- 
-AddEx lines 234-7 commented
-Select WO mandatory -> Search for ex -> add w/r -> addEx --> refresh -> GREEN
- 
-Clear will clear search criteria, randex entry
-
-WO Selected --> dropdown category --> pick exercise --> add w/r --> AddEx --> refresh --> RED
-    error 400
-
-restored 234-5, error 400
-
-restored 234-7, error 400
-
-
-
 
 
 

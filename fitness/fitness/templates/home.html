@@ -9,12 +9,14 @@
       <p> {% for workout in user.workouts %}</p>
         {% workout% }
         {% endfor %}
-  {% else %}
+    <p><a href="{% url 'create' %}">Create a workout now</a></p>
+    {% else %}
   <p>You have not created any workouts yet!</p>
   <p><a href="{% url 'create' %}">Create a workout now</a></p>
   {% endif %}
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">Login</a>
+  <a href="{% url 'signup' %}">Sign Up</a>
 {% endif %}
 {% endblock %}

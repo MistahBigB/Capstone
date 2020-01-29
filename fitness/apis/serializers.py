@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from fitness import models
+from django.contrib.auth.models import User
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -59,5 +60,13 @@ class WorkoutSerializer(serializers.ModelSerializer):
     superset_info = SuperSetSerializer(many=True, read_only=True, source='supersets')
     class Meta:
         model = models.Workout
-        fields = ['id', 'name', 'date_created', 'exercise_info', 'supersets', 'superset_info']
+        fields = ['id', 'name', 'date_created', 'exercise_info', 'supersets', 'superset_info', 'author']
     # depth = 1
+
+class UsersSerializer(serializers.ModelSerializer):    
+    class Meta:
+        fields = (
+            'username',
+            'id',
+        )
+        model = User 
