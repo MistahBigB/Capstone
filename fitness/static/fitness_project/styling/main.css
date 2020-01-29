@@ -15,7 +15,7 @@ html, body, section {
     padding: 1rem;
   }
   
-  .right-half {
+  .righthalf {
     /* background-color: #b6701e; */
     flex-direction: column;
     flex: 1;

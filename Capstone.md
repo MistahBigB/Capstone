@@ -141,14 +141,16 @@ Week1:
 
 Week2:
 1/27: Users!
-1/28: Ensuring user CRUDL, display workout names/links on user page, signup page, permissions
-1/29: Calendar!
+1/28: Ensuring user CRUDL, display workout names/links on user page, signup page, permissions to post/retrieve workouts
+1/29: Adding workouts of any kind gives a 403. Delete individual exercises in a workout button. CODE FREEZE, MAKE A FORK
+1/30: Calendar!
 
 
 
-    Blocks: Add exercise needs to refresh the workout list to show the recent addition -> check rerendering of state for VUE
+    Blocks: Add exercise needs to refresh the current workout to show the recent addition -> check rerendering of state for VUE
             Add exercise is displaying an extra blank container when the button is pressed
-            All users can see all workouts
+            Would like to have new list be default on rerender
+            Rep and weight inputs are still all linked
             
             Enter button for a dropdown selector?
 
