@@ -46,4 +46,5 @@ class SuperSet(models.Model):
     exercise = models.ForeignKey(Exercise, related_name='supersets', on_delete=models.CASCADE)
     rep = models.IntegerField()
     weight = models.IntegerField()
+    
 

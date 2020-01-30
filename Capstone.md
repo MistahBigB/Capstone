@@ -146,13 +146,12 @@ Week2:
 1/30: Calendar!
 
 
-
-    Blocks: Add exercise needs to refresh the current workout to show the recent addition -> check rerendering of state for VUE
-            Add exercise is displaying an extra blank container when the button is pressed
-            Would like to have new list be default on rerender
-            Rep and weight inputs are still all linked
+    Blocks: Would like to have new list be default on rerender
+            rep and weight inputs are still all linked --> hide rep/weight until ex is selected, reveal fields for one ex
+            List of workouts displayed on user's home page
             
-            Enter button for a dropdown selector?
-
-
-
+    Blocks solved: 
+            Add exercise needs to refresh the current workout to show the recent addition -> check rerendering of state for VUE
+            Add exercise is displaying an extra blank container when the button is pressed
+            Delete button takes up 25% of screen
+            Can't add to the first workout in the list --> id=0 is not the same as pk=0

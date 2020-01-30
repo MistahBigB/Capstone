@@ -53,13 +53,14 @@
                     <br>
                     <p v-for="exercise in group.exercises">
                         [[ exercise.name ]]<img :src="exercise.img" style="width:100px;height:100px;">
-                        <!-- assign a uninque ID to each field, ++ for each item in loop -->
+                        <!-- assign a unique ID to each field, ++ for each item in loop -->
                         <input type="number" placeholder="weight" v-model="filteredExercise.weight" min="0" />
                         <input type="number" placeholder="reps" v-model="filteredExercise.rep" min="0" />
                         <add-exercise @add-exercise="addExercise(exercise)" class='btn'></add-exercise>
                     </p>
                 </ul>
             </div>
+    
             <!-- randEx display -->
             <ul v-for="exercise in newWorkout" :key="exercise.id">
                 <p>
@@ -74,26 +75,23 @@
 
         <div class="righthalf">
             <h1>Select Your Workout!</h1>
-            <input type="text" placeholder="Workout1" id="workout-name" v-model="workout.name">
+            <input type="text" placeholder="Make a New Workout" id="workout-name" v-model="workout.name">
             <button @click.prevent="storeName($event)" class="btn">Save</button>
 
             <div class="dropdown">
-                <button @click="showDropdown2($event)" class="dropbtn">My Workouts</button>
+                <!-- <button @click="showDropdown2($event)" class="dropbtn">My Workouts</button>
                 <hide-dropdown2 @click="hideDropdown2($event)"></hide-dropdown2>
-                
-                <!-- big dropdown -->
-                <div id="myDropdown2" class="dropdown-content">
-                    <!-- list of available workouts -->
+                big dropdown     list of available workouts -->
+                <!-- <div id="myDropdown2" class="dropdown-content" v-model="menu2" v-if="workout.length > 0">
+               
                     <a @click="getWorkout(workout)"></a>
-                    <option v-for="item in workout" :key="item.id">
-                        [[ item.name ]]
+                    <option v-for='item, i in workout' :key="item.id" :value="item.id">
+                        [[item.name]]
                     </option>
 
-                </div>
+                </div> -->
                 <!-- small dropdown -->
                 <select v-model="menu2" v-if="workout.length > 0">
-                    <!-- if workout = '', display="none" else -->
-                <!-- <@click="showContent()"> -->
                     <option v-for='item, i in workout' :key="item.id" :value="item.id">
                         [[item.name]]
                     </option>
@@ -106,24 +104,40 @@
                         <p> [[ exercise.exercise_info.name ]] 
                             <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
                             <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
-                            <delete-exercise @delete-exercise="deleteExercise(exercise)"></delete-exercise>
+                            <delete-superset @delete-superset="deleteSuperSet(exercise)"></delete-superset>
                         </p>
                             </div>
                         </p>
                     </div>
                 </div>
-                </div>
-                <delete-workout @delete-workout="deleteWorkout(deleteWorkout)"></delete-workout>
+                <!-- removed the .prevent from the component but that only refreshes form tags -->
+                <delete-workout @delete-workout="deleteWorkout(menu2)"></delete-workout>
     
             </div>
             
         </div>
     </div>
-    </div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
     <script>
+
+        // Vue.component('randex-display', {
+        //     data: function () {
+        //             },
+        //     prop: ['exercise'],
+        //     template: `
+        //         <ul v-for="exercise in newWorkout" :key="exercise.id">
+        //         <p>
+        //             [[exercise.name]] <img :src="exercise.img" style="width:100px;height:100px;">
+        //             <input type="number" placeholder="weight" v-model="filteredExercise.weight" min="0" value="0" />
+        //             <input type="number" placeholder="reps" v-model="filteredExercise.rep" min="0" value="0" />
+        //             <add-exercise @add-exercise="addExercise(exercise)" class='btn'></add-exercise>
+        //         </p>
+        //         <delete-exercise @delete-exercise="deleteExercise(exercise)"></delete-exercise>
+        //         </ul>
+        //             `
+        // })
 
         Vue.component('rand-ex', {
             template: `<div v-on:click.prevent="$emit('rand-ex')" class='btn'>Give me something to do right now!</div>`
@@ -159,8 +173,16 @@
             template: `<div v-on:click.prevent="$emit('workout-list')">[[filteredExercise.name]]</div>`
         })
 
+        Vue.component('delete-exercise', {
+            template: `<div v-on:click.prevent="$emit('delete-exercise')" class='btn'>Clear Exercise</div>`
+        })
+
         Vue.component('delete-workout', {
             template: `<div v-on:click.prevent="$emit('delete-workout')" class='btn'>Delete Workout</div>`
+        })
+
+        Vue.component('delete-superset', {
+            template: `<div v-on:click.prevent="$emit('delete-superset')" class='btn'>Delete Exercise</div>`
         })
 
         let vm = new Vue({
@@ -182,9 +204,10 @@
                 muscleGroups: [],
                 token: "{{ csrf_token }}",
                 // default for current workout must be set
-                // else the page won't load
+                // else the page won't reload
                 current_workout: 0,
                 current_user: {},
+                mods: [],            
             },
             methods: {
                 storeName: function () {
@@ -203,7 +226,14 @@
                     })
                 },
 
-                deleteWorkout: function (workout) {
+                deleteWorkout: function (workout_id) {
+                    axios({
+                        method: 'DELETE',
+                        url: `/apis/v1/workout/${workout_id}/`,
+                        headers: { 'X-CSRFToken': this.token },
+                    }).then(response => {
+                    console.log("trying to delete")
+                    console.log(this.superSet)
                     console.log(this.workout)
                     this.superSet = {
                         id: null,
@@ -211,8 +241,29 @@
                         newWorkout: [],
                         superSet: []
                     }
+                    delete this.superSet
+                    delete this.workout
                     console.log('deleted')
-                    console.log(this.superSet)
+                    this.workout = this.getWorkout(response.data)
+                    this.current_workout = this.workout
+                    console.log(this.workout)
+                    menu2 = ''
+                    })
+                },
+
+                deleteSuperSet: function (superset) {
+                    console.log(this.newWorkout);
+                    axios({
+                        method: 'DELETE',
+                        url: `/apis/v1/superset/${superset.id}/`,
+                        headers: { 'X-CSRFToken': this.token },
+                    }).then(response => {
+                    console.log(superset.id);
+                    // this.filteredExercise = { exercise: null, rep: null, weight: null }
+                    // this.newWorkout.splice(this.newWorkout.indexOf(exercise), 1);
+                    this.workout = this.getWorkout(response.data)
+                    this.current_workout = this.workout.id
+                    })
                 },
 
                 addExercise: function (exercise) {
@@ -227,17 +278,8 @@
                             rep: this.filteredExercise.rep,
                             weight: this.filteredExercise.weight
                         }
-                        // data: {
-                        //     exercise: this.filteredExercise.id,
-                        //     workout: this.menu2,
-                        //     rep: parseInt(this.filteredExercise.rep),
-                        //     weight: parseInt(this.filteredExercise.weight)
-                        // }
-                         
                     }).then((response) => {
                         console.log(response)
-                        // console.log(this.exercise),
-                        // console.log(filteredExercise),
                             this.filteredExercise = {
                                 exercise: this.exercise,
                                 rep: this.rep,
@@ -274,9 +316,7 @@
                         url: "/apis/v1/workout/",
                         headers: { 'X-CSRFToken': this.token },
                     }).then(response => {
-                        sets = response.data
-                        console.log(sets)
-                        this.workout = sets
+                        this.workout = response.data
                     })
                 },
 
@@ -289,7 +329,6 @@
                         this.current_user = response.data
                     })
                 },
-
 
                 randEx: function () {
                     axios({
@@ -341,7 +380,7 @@
                     console.log('clicked hide')
                 },
 
-                /* Toggle between hiding and showing the dropdown content */
+                /* Toggle between hiding and showing the dropdown2 content */
                 showDropdown2: function (event) {
                     document.getElementById("myDropdown2").classList.toggle("show");
                     console.log('show')
@@ -349,10 +388,6 @@
                 hideDropdown2: function (event) {
                     document.getElementById("myDropdown2").classList.toggle("show");
                     console.log('clicked hide')
-                },
-                // this doesn't want to turn R side menu content on and off
-                showContent: function (event) {
-                    document.getElementById('content').classList.toggle('show');
                 },
 
                 filterFunction: function () {
@@ -375,13 +410,6 @@
                     // won't select workout[0] if i+1, but posts to it
                     this.current_workout = i
                 },
-
-                refreshDiv: function () {
-                    let contain = document.getElementById('righthalf')
-                    let content = contain.innerHTML
-                    contain.innerHTML = content
-                    console.log('refreshing')
-                }
 
             },
             mounted: function () {

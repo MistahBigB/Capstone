@@ -49,11 +49,13 @@ class SuperSetSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.SuperSet
         fields = [
+            'id',
             'exercise',
             'workout',
             'rep',
             'weight',
-            'exercise_info'
+            'exercise_info',
+            
         ]
 class WorkoutSerializer(serializers.ModelSerializer):
     exercise_info = ExerciseSerializer(many=True, read_only=True, source='exercises')
