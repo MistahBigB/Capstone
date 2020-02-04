@@ -143,15 +143,45 @@ Week2:
 1/27: Users!
 1/28: Ensuring user CRUDL, display workout names/links on user page, signup page, permissions to post/retrieve workouts
 1/29: Adding workouts of any kind gives a 403. Delete individual exercises in a workout button. CODE FREEZE, MAKE A FORK
-1/30: Calendar!
+1/30: Calendar using the Calandly links!
 
 
-    Blocks: Would like to have new list be default on rerender
+    Blocks/bugs:
+            Would like to have new list be default on rerender
             rep and weight inputs are still all linked --> hide rep/weight until ex is selected, reveal fields for one ex
             List of workouts displayed on user's home page
             
-    Blocks solved: 
+    Blocks/bugs solved: 
             Add exercise needs to refresh the current workout to show the recent addition -> check rerendering of state for VUE
             Add exercise is displaying an extra blank container when the button is pressed
             Delete button takes up 25% of screen
             Can't add to the first workout in the list --> id=0 is not the same as pk=0
+            
+
+Presentation: Login page --> Sign up --> make user --> log in as user
+
+Check my calendar, showing no entries
+mention a link to put in place user registration, hardcoded today
+
+Create a workout button 
+Create two workouts --> Crazy, Cool
+Select workout from dropdown that appears
+
+Give me something to do right now! enter W/R, add, clear exercise
+Search for bench press --> enter W/R, add
+Browse by muscle group --> Back, show whole list, enter W/R from top entry, clear
+Browse by muscle group --> Core, show whole list, show that PUSHUPS is on both lists, enter W/R from top entry, clear 
+
+Schedule this workout! 
+
+That workout actually looks pretty terrifying, I think we're just going to delete it. 
+
+Delete workout, select the other from the dropdown, show that the other one is no longer accessible.
+
+Stretch goals: tracking, adjusting based on data, different calendar to track data, users having multiple clients that they're training, full list of pre-built workouts based on what HHS thinks a human can do, adjusting those numbers to meet user goals
+
+favorite part: When the API call successfully returned a random exercise to the screen, based on a button click
+
+hardest part: rebuilding this main page to include author in all relevant fields once users had been added
+
+

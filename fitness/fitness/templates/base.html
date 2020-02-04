@@ -1,14 +1,19 @@
-<!DOCTYPE html>
+<!DOCTYPE html> {% load static %}
 <html>
+
 <head>
-  <meta charset="utf-8">
-  <title>{% block title %}WITNESS: the Fitness App{% endblock %}</title>
+    <meta charset="utf-8">
+    <title>{% block title %}WITNESS: the Fitness App{% endblock %}</title>
+    <link rel="stylesheet" href='main.css'>
 </head>
+
 <body>
-  <main>
-      <h1>WITNESS: the Fitness App</h1>
-    {% block content %}
-    {% endblock %}
-  </main>
+    <main>
+        <h1>WITNESS: the Fitness App</h1>
+        {% block content %} {% endblock %}
+        <br>
+        <img src="/media/Arnie.jpg" />
+    </main>
 </body>
+
 </html>

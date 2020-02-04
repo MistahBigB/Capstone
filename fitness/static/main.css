@@ -2,6 +2,9 @@ html,
 body,
 section {
     height: 100%;
+    display: flex;
+    justify-content: center;
+    background-color: #0F4C81;
 }
 
 .container {
@@ -9,22 +12,39 @@ section {
     flex-direction: row;
     justify-content: center;
     background-color: green;
+    flex-wrap: wrap;
+}
+
+.img {
+    max-width: 100%;
+    height: auto;
 }
 
 .left-half {
-    background-color: #0F4C81;
+    /* background-color: #0F4C81; */
     display: flex;
     flex-direction: column;
     flex: 1;
     padding: 1rem;
+    background-color: green;
+    /* extras */
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
 }
 
 .righthalf {
-    background-color: #b6701e;
+    /* background-color: #b6701e; */
     display: flex;
     flex-direction: column;
     flex: 1;
     padding: 1rem;
+    /* extras */
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn {
@@ -53,7 +73,8 @@ section {
 }
 
 .dropbtn {
-    background-color: #4CAF50;
+    background-color: red;
+    /* background-color: #4CAF50; */
     color: white;
     padding: 16px;
     font-size: 16px;
@@ -69,7 +90,6 @@ section {
 
 #myInput {
     box-sizing: border-box;
-    background-image: url('searchicon.png');
     background-position: 14px 12px;
     background-repeat: no-repeat;
     font-size: 16px;
@@ -85,7 +105,6 @@ section {
 
 #workout-name {
     box-sizing: border-box;
-    background-image: url('searchicon.png');
     background-position: 14px 12px;
     background-repeat: no-repeat;
     font-size: 16px;
@@ -132,9 +151,9 @@ section {
 
 /* Media query section */
 
-@media(max-width: 700px) {
+@media only screen and (min-width: 901px) {
     .container {
-        grid-template-areas: 'left-half' 'right-half';
+        grid-template-areas: 'left-half' 'righthalf';
         background-color: green;
     }
     .container ul {
@@ -147,13 +166,26 @@ section {
     }
 }
 
-@media(max-width: 400px) {
+@media only screen and (min-width: 401px) and (max-width: 900px) {
     .container {
-        grid-template-areas: 'right-half' 'left-half';
-        background-color: green;
+        grid-template-areas: 'left-half' 'righthalf';
+        background-color: red;
     }
-    .container {
+    .container ul {
         grid-template-columns: 1fr;
+    }
+    .btn {
+        display: block;
+        text-align: center;
+        margin: auto;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    .container {
+        grid-template-areas: 'righthalf' 'left-half';
+        grid-template-columns: 1fr;
+        background-color: red;
     }
     .btn {
         display: block;

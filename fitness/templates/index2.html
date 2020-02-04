@@ -1,30 +1,63 @@
-<!-- ask someone if they remember which link had the fields updating at the same time, and how to fix it -->
-<!-- word is build components and instantiate them when the loop runs -->
-
-
-
-
-
-
-
-
-<!DOCTYPE html>
-{% load static %}
+<!DOCTYPE html> {% load static %}
 
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>CappyStoney Jabroni</title>
+    <title>WITNESS: the Fitness App</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'fitness_project/styling/main.css' %}">
+    <link rel="stylesheet" href="{% static 'main.css' %}">
 </head>
 
 <body>
     <div id="app" class="container">
+        <div class="righthalf">
+            <h2>Select Your Workout!</h2>
+            <input type="text" placeholder="Make a New Workout" id="workout-name" v-model="workout.name">
+            <button @click.prevent="storeName($event)" class="btn">Save</button>
+
+            <div class="dropdown">
+                <!-- <button @click="showDropdown2($event)" class="dropbtn">My Workouts</button>
+                <hide-dropdown2 @click="hideDropdown2($event)"></hide-dropdown2>
+                big dropdown     list of available workouts -->
+                <!-- <div id="myDropdown2" class="dropdown-content" v-model="menu2" v-if="workout.length > 0">
+               
+                    <a @click="getWorkout(workout)"></a>
+                    <option v-for='item, i in workout' :key="item.id" :value="item.id">
+                        [[item.name]]
+                    </option>
+
+                </div> -->
+
+                <!-- small dropdown -->
+                <select v-model="menu2" v-if="workout.length > 0" class="dropbtn">
+                    <option v-for='item, i in workout' :key="item.id" :value="item.id">
+                        [[item.name]]
+                    </option>
+                </select>
+
+            </div>
+            <!-- map through workouts to return this.workout.data.filter('this.workout[id]') -->
+            <!-- <div id="content" v-for="wo in workout" > -->
+            <div v-if="menu2 > 0" class="content">
+                <div v-for="exercise in selectedWorkout.superset_info" :key="exercise.id">
+                    <p> [[ exercise.exercise_info.name ]]
+                        <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
+                        <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
+                        <delete-superset @delete-superset="deleteSuperSet(exercise)"></delete-superset>
+                    </p>
+                </div>
+                </p>
+            </div>
+
+            <!-- removed the .prevent from the component but that only refreshes form tags -->
+            <delete-workout @delete-workout="deleteWorkout(menu2)"></delete-workout>
+            <!-- <button class="btn"><a href="calendly.com">My Calendar</a></button> -->
+
+        </div>
         <!--  @click="hideDropdown($event)" -->
         <div class="left-half">
-            <h1>Let's build a workout!</h1>
+            <h2>Build A Workout!</h2>
             <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
             <search-button @search-button="searchButton" class="btn"></search-button>
             <delete-exercise @delete-exercise="deleteExercise(filteredExercise.exercise)" class="btn"></delete-exercise>
@@ -47,20 +80,19 @@
             </div>
             <delete-exercise @delete-exercise="deleteExercise(filteredExercise)"></delete-exercise>
             <!-- dropdown display -->
-            <div>
+            <div class="content">
                 <ul v-for="group in muscleGroups">
                     [[ group.name ]]
                     <br>
                     <p v-for="exercise in group.exercises">
                         [[ exercise.name ]]<img :src="exercise.img" style="width:100px;height:100px;">
-                        <!-- assign a unique ID to each field, ++ for each item in loop -->
                         <input type="number" placeholder="weight" v-model="filteredExercise.weight" min="0" />
                         <input type="number" placeholder="reps" v-model="filteredExercise.rep" min="0" />
                         <add-exercise @add-exercise="addExercise(exercise)" class='btn'></add-exercise>
                     </p>
                 </ul>
             </div>
-    
+
             <!-- randEx display -->
             <ul v-for="exercise in newWorkout" :key="exercise.id">
                 <p>
@@ -73,55 +105,31 @@
             </ul>
         </div>
 
-        <div class="righthalf">
-            <h1>Select Your Workout!</h1>
-            <input type="text" placeholder="Make a New Workout" id="workout-name" v-model="workout.name">
-            <button @click.prevent="storeName($event)" class="btn">Save</button>
 
-            <div class="dropdown">
-                <!-- <button @click="showDropdown2($event)" class="dropbtn">My Workouts</button>
-                <hide-dropdown2 @click="hideDropdown2($event)"></hide-dropdown2>
-                big dropdown     list of available workouts -->
-                <!-- <div id="myDropdown2" class="dropdown-content" v-model="menu2" v-if="workout.length > 0">
-               
-                    <a @click="getWorkout(workout)"></a>
-                    <option v-for='item, i in workout' :key="item.id" :value="item.id">
-                        [[item.name]]
-                    </option>
+        <!-- Calendly badge widget -->
+        <link href="{% static 'fitness_project/styling/widget.css' %}" rel="stylesheet">
 
-                </div> -->
-                <!-- small dropdown -->
-                <select v-model="menu2" v-if="workout.length > 0">
-                    <option v-for='item, i in workout' :key="item.id" :value="item.id">
-                        [[item.name]]
-                    </option>
-                </select>
+    </div>
 
-                <!-- map through workouts to return this.workout.data.filter('this.workout[id]') -->
-                <!-- <div id="content" v-for="wo in workout" > -->
-                    <div v-if="menu2 > 0"> 
-                        <div v-for="exercise in selectedWorkout.superset_info" :key="exercise.id">
-                        <p> [[ exercise.exercise_info.name ]] 
-                            <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
-                            <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
-                            <delete-superset @delete-superset="deleteSuperSet(exercise)"></delete-superset>
-                        </p>
-                            </div>
-                        </p>
-                    </div>
-                </div>
-                <!-- removed the .prevent from the component but that only refreshes form tags -->
-                <delete-workout @delete-workout="deleteWorkout(menu2)"></delete-workout>
-    
-            </div>
-            
-        </div>
     </div>
 
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://unpkg.com/vue"></script>
-    <script>
 
+    <script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        Calendly.initBadgeWidget({
+            url: 'https://calendly.com/capstone-witness/60min',
+            //url: `https://calendly.com/{current_user}/60min`, 
+            text: 'Schedule this workout!',
+            color: '#00a2ff',
+            textColor: '#ffffff',
+            branding: false,
+            class: 'btn'
+        });
+    </script>
+
+    <script>
         // Vue.component('randex-display', {
         //     data: function () {
         //             },
@@ -140,11 +148,11 @@
         // })
 
         Vue.component('rand-ex', {
-            template: `<div v-on:click.prevent="$emit('rand-ex')" class='btn'>Give me something to do right now!</div>`
+            template: `<div v-on:click.prevent="$emit('rand-ex')" class='btn'>Give Me Something To Do Right Now!</div>`
         })
 
         Vue.component('add-exercise', {
-            template: `<div v-on:click.prevent="$emit('add-exercise')" class='btn'>Add exercise to workout</div>`
+            template: `<div v-on:click.prevent="$emit('add-exercise')" class='btn'>Add Exercise To Workout</div>`
         })
 
         Vue.component('search-button', {
@@ -186,7 +194,7 @@
         })
 
         let vm = new Vue({
-            el: '#app', 
+            el: '#app',
             delimiters: ['[[', ']]'],
             data: {
                 superSet: {
@@ -207,14 +215,16 @@
                 // else the page won't reload
                 current_workout: 0,
                 current_user: {},
-                mods: [],            
+                mods: [],
             },
             methods: {
-                storeName: function () {
+                storeName: function() {
                     axios({
                         method: 'POST',
                         url: "/apis/v1/workout/",
-                        headers: { 'X-CSRFToken': this.token },
+                        headers: {
+                            'X-CSRFToken': this.token
+                        },
                         data: {
                             author: this.current_user.id,
                             name: this.workout.name,
@@ -226,51 +236,69 @@
                     })
                 },
 
-                deleteWorkout: function (workout_id) {
+                deleteWorkout: function(workout_id) {
                     axios({
                         method: 'DELETE',
                         url: `/apis/v1/workout/${workout_id}/`,
-                        headers: { 'X-CSRFToken': this.token },
+                        headers: {
+                            'X-CSRFToken': this.token
+                        },
                     }).then(response => {
-                    console.log("trying to delete")
-                    console.log(this.superSet)
-                    console.log(this.workout)
-                    this.superSet = {
-                        id: null,
-                        name: null,
-                        newWorkout: [],
-                        superSet: []
-                    }
-                    delete this.superSet
-                    delete this.workout
-                    console.log('deleted')
-                    this.workout = this.getWorkout(response.data)
-                    this.current_workout = this.workout
-                    console.log(this.workout)
-                    menu2 = ''
+                        console.log("trying to delete")
+                        console.log(this.superSet)
+                        console.log(this.workout)
+                        this.superSet = {
+                            id: null,
+                            name: null,
+                            newWorkout: [],
+                            superSet: []
+                        }
+                        delete this.superSet
+                        delete this.workout
+                        console.log('deleted')
+                        this.workout = this.getWorkout(response.data)
+                        this.current_workout = this.workout
+                        console.log(this.workout)
+                        menu2 = ''
                     })
                 },
 
-                deleteSuperSet: function (superset) {
+                deleteSuperSet: function(superset) {
                     console.log(this.newWorkout);
                     axios({
                         method: 'DELETE',
                         url: `/apis/v1/superset/${superset.id}/`,
-                        headers: { 'X-CSRFToken': this.token },
+                        headers: {
+                            'X-CSRFToken': this.token
+                        },
                     }).then(response => {
-                    console.log(superset.id);
-                    // this.filteredExercise = { exercise: null, rep: null, weight: null }
-                    // this.newWorkout.splice(this.newWorkout.indexOf(exercise), 1);
-                    this.workout = this.getWorkout(response.data)
-                    this.current_workout = this.workout.id
+                        console.log(superset.id);
+                        // this.filteredExercise = { exercise: null, rep: null, weight: null }
+                        // this.newWorkout.splice(this.newWorkout.indexOf(exercise), 1);
+                        this.workout = this.getWorkout(response.data)
+                        this.current_workout = this.workout.id
                     })
                 },
 
-                addExercise: function (exercise) {
+                calendar: function() {
+                    axios({
+                        method: 'GET',
+                        url: "https://calendly.com/api/v1/",
+                        headers: {
+                            'X-CSRFToken': 'AIABFHMCJWGCOPZ627LDHO4DYVSBADTE'
+                        }
+                    }).then(response => {
+
+                    })
+                },
+
+                addExercise: function(exercise) {
                     axios({
                         method: 'POST',
                         url: "/apis/v1/superset/",
-                        headers: { 'X-CSRFToken': this.token },
+                        headers: {
+                            'X-CSRFToken': this.token
+                        },
                         data: {
                             author: this.current_user,
                             exercise: exercise.id,
@@ -278,18 +306,18 @@
                             rep: this.filteredExercise.rep,
                             weight: this.filteredExercise.weight
                         }
-                    }).then((response) => {
+                    }).then(response => {
                         console.log(response)
-                            this.filteredExercise = {
+                        this.filteredExercise = {
                                 exercise: this.exercise,
                                 rep: this.rep,
                                 weight: this.weight,
                             }
-                        // this.filteredExercise.id++;
-                      
+                            // this.filteredExercise.id++;
+
                         // this line caused an extra blank exercise to populate after the addition   
                         // this.newWorkout.push(this.filteredExercise)
-                      
+
                         // console.log(this.newWorkout)
                         // this.superSet.newWorkout.push(this.filteredExercise)
                         // console.log(this.superSet)
@@ -300,9 +328,13 @@
                     })
                 },
 
-                deleteExercise: function (exercise) {
+                deleteExercise: function(exercise) {
                     console.log(this.filteredExercise);
-                    this.filteredExercise = { exercise: null, rep: null, weight: null }
+                    this.filteredExercise = {
+                        exercise: null,
+                        rep: null,
+                        weight: null
+                    }
                     this.newWorkout.splice(this.newWorkout.indexOf(exercise), 1);
                     this.searchInput = ''
                     this.muscleGroups = []
@@ -310,27 +342,31 @@
                     this.filterFunction();
                 },
 
-                getWorkout: function (workout) {
+                getWorkout: function(workout) {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/workout/",
-                        headers: { 'X-CSRFToken': this.token },
+                        headers: {
+                            'X-CSRFToken': this.token
+                        },
                     }).then(response => {
                         this.workout = response.data
                     })
                 },
 
-                getCurrentUser: function () {
+                getCurrentUser: function() {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/current_user/",
-                        headers: { 'X-CSRFToken': this.token },
+                        headers: {
+                            'X-CSRFToken': this.token
+                        },
                     }).then(response => {
                         this.current_user = response.data
                     })
                 },
 
-                randEx: function () {
+                randEx: function() {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/exercise/",
@@ -344,11 +380,13 @@
                     }).catch(error => console.log(error))
                 },
 
-                searchButton: function () {
+                searchButton: function() {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/exercise/",
-                        params: { name: this.searchInput }
+                        params: {
+                            name: this.searchInput
+                        }
                     }).then(response => {
                         console.log(this.searchInput)
                         this.filteredExercise = response.data[0]
@@ -358,11 +396,13 @@
                     }).catch(error => console.log(error))
                 },
 
-                getMuscleGroup: function (name) {
+                getMuscleGroup: function(name) {
                     axios({
                         method: 'GET',
                         url: "/apis/v1/muscle",
-                        params: { name: name }
+                        params: {
+                            name: name
+                        }
                     }).then(response => {
                         groups = response.data
                         console.log(groups)
@@ -371,26 +411,26 @@
                 },
 
                 /* Toggle between hiding and showing the dropdown content */
-                showDropdown: function (event) {
+                showDropdown: function(event) {
                     document.getElementById("myDropdown").classList.toggle("show");
                     console.log('show')
                 },
-                hideDropdown: function (event) {
+                hideDropdown: function(event) {
                     document.getElementById("myDropdown").toggle('show');
                     console.log('clicked hide')
                 },
 
                 /* Toggle between hiding and showing the dropdown2 content */
-                showDropdown2: function (event) {
+                showDropdown2: function(event) {
                     document.getElementById("myDropdown2").classList.toggle("show");
                     console.log('show')
                 },
-                hideDropdown2: function (event) {
+                hideDropdown2: function(event) {
                     document.getElementById("myDropdown2").classList.toggle("show");
                     console.log('clicked hide')
                 },
 
-                filterFunction: function () {
+                filterFunction: function() {
                     var input, filter, ul, li, a, i;
                     input = document.getElementById("myInput");
                     filter = input.value.toLowerCase();
@@ -405,25 +445,27 @@
                         }
                     }
                 },
-                setCurrentWorkout: function (i) {
+                setCurrentWorkout: function(i) {
                     // can't post to workout[0] unless i+1
                     // won't select workout[0] if i+1, but posts to it
                     this.current_workout = i
                 },
 
             },
-            mounted: function () {
+            mounted: function() {
                 axios({
                     url: '/apis/v1/workout/',
                     method: 'GET',
-                    headers: { 'X-CSRFToken': this.token },
+                    headers: {
+                        'X-CSRFToken': this.token
+                    },
                 }).then(response => {
                     this.workout = response.data
                 }).catch(error => console.log(error))
                 this.getCurrentUser()
             },
             computed: {
-                selectedWorkout: function () {
+                selectedWorkout: function() {
                     return this.workout.filter(wo => wo.id === this.menu2)[0]
                 }
             }
