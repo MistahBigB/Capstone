@@ -12,7 +12,7 @@
 <body>
     <div id="app" class="container">
         <div class="righthalf">
-            <h2>Select Your Workout!</h2>
+            <h2>Select A Workout!</h2>
             <input type="text" placeholder="Make a New Workout" id="workout-name" v-model="workout.name">
             <button @click.prevent="storeName($event)" class="btn">Save</button>
 
@@ -43,7 +43,7 @@
                 <div v-for="exercise in selectedWorkout.superset_info" :key="exercise.id">
                     <p> [[ exercise.exercise_info.name ]]
                         <img :src="exercise.exercise_info.img" style="width:100px;height:100px;">
-                        <p> reps: [[ exercise.rep ]] weight: [[ exercise.weight ]] </p>
+                        <p> weight: [[ exercise.weight ]] reps: [[ exercise.rep ]] </p>
                         <delete-superset @delete-superset="deleteSuperSet(exercise)"></delete-superset>
                     </p>
                 </div>
@@ -57,10 +57,9 @@
         </div>
         <!--  @click="hideDropdown($event)" -->
         <div class="left-half">
-            <h2>Build A Workout!</h2>
+            <h2> Build A Workout! </h2>
             <input type="search" placeholder="Search..." id="myInput" @keyup="filterFunction" v-model="searchInput">
             <search-button @search-button="searchButton" class="btn"></search-button>
-            <delete-exercise @delete-exercise="deleteExercise(filteredExercise.exercise)" class="btn"></delete-exercise>
             <rand-ex @rand-ex="randEx($event)" class="btn"></rand-ex>
 
             <div class="dropdown">
